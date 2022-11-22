@@ -255,7 +255,10 @@ ifeq ($(TARGET_PRODUCT), $(filter $(TARGET_PRODUCT), picasso picassoin monet van
 CDEFINES += -DAUDIO_SM7250_FLAG
 endif
 
-ifeq ($(TARGET_PRODUCT), $(filter $(TARGET_PRODUCT), picasso picassoin))
+ifeq (y, $(filter y,\
+	$(CONFIG_MACH_XIAOMI_LMI) \
+	$(CONFIG_MACH_XIAOMI_MUNCH) \
+	$(CONFIG_MACH_XIAOMI_PICASSO)))
 CDEFINES += -DTFA_ADSP_SUPPORTED
 endif
 

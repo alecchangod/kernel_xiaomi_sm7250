@@ -103,6 +103,11 @@ ifneq (,$(filter $(TARGET_PRODUCT), picasso picassoin))
 CDEFINES += -DTFA_NON_DSP_SOLUTION
 endif
 
+ifeq ($(CONFIG_MACH_XIAOMI_LMI),y)
+	CDEFINES += -DTFA_NON_DSP_SOLUTION
+	CDEFINES += -DNXP_SPEAKERBOOST_V3
+endif
+
 KBUILD_CPPFLAGS += $(CDEFINES)
 
 # Currently, for versions of gcc which support it, the kernel Makefile
@@ -129,6 +134,9 @@ endif
 # Module information used by KBuild framework
 obj-$(CONFIG_SND_SOC_TFA9874)    += tfa98xx_dlkm.o
 tfa98xx_dlkm-y := $(TFA98XX_OBJS)
+<<<<<<< HEAD
 
 # inject some build related information
 DEFINES += -DBUILD_TIMESTAMP=\"$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')\"
+=======
+>>>>>>> 04725f27a7be (techpack: audio: Import Xiaomi changes)

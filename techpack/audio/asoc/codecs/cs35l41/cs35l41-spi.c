@@ -2,7 +2,6 @@
  * cs35l41-spi.c -- CS35l41 SPI driver
  *
  * Copyright 2017 Cirrus Logic, Inc.
- * Copyright (C) 2021 XiaoMi, Inc.
  *
  * Author:	David Rhodes	<david.rhodes@cirrus.com>
  *
@@ -45,9 +44,9 @@ static struct regmap_config cs35l41_regmap_spi = {
 };
 
 static const struct spi_device_id cs35l41_id_spi[] = {
-	{"cs35l40", 0},
-	{"cs35l41", 0},
-	{}
+	{ "cs35l40", 0 },
+	{ "cs35l41", 0 },
+	{},
 };
 
 MODULE_DEVICE_TABLE(spi, cs35l41_id_spi);
@@ -55,13 +54,11 @@ MODULE_DEVICE_TABLE(spi, cs35l41_id_spi);
 static int cs35l41_spi_probe(struct spi_device *spi)
 {
 	const struct regmap_config *regmap_config = &cs35l41_regmap_spi;
-	struct cs35l41_platform_data *pdata =
-					dev_get_platdata(&spi->dev);
+	struct cs35l41_platform_data *pdata = dev_get_platdata(&spi->dev);
 	struct cs35l41_private *cs35l41;
 	int ret;
 
-	cs35l41 = devm_kzalloc(&spi->dev,
-			       sizeof(struct cs35l41_private),
+	cs35l41 = devm_kzalloc(&spi->dev, sizeof(struct cs35l41_private),
 			       GFP_KERNEL);
 	if (cs35l41 == NULL)
 		return -ENOMEM;
@@ -95,8 +92,13 @@ static int cs35l41_spi_remove(struct spi_device *spi)
 }
 
 static const struct of_device_id cs35l41_of_match[] = {
+<<<<<<< HEAD
 	{.compatible = "cirrus,cs35l40"},
 	{.compatible = "cirrus,cs35l41"},
+=======
+	{ .compatible = "cirrus,cs35l40" },
+	{ .compatible = "cirrus,cs35l41" },
+>>>>>>> 04725f27a7be (techpack: audio: Import Xiaomi changes)
 	{},
 };
 MODULE_DEVICE_TABLE(of, cs35l41_of_match);

@@ -21,7 +21,11 @@
 #include "msm-dai-q6-v2.h"
 #include <asoc/core.h>
 #ifdef TFA_ADSP_SUPPORTED
+#if defined(CONFIG_MACH_XIAOMI_MUNCH)
+#include "codecs/tfa9874/inc/tfa_platform_interface_definition.h"
+#else
 #include "codecs/tfa98xx/inc/tfa_platform_interface_definition.h"
+#endif
 #endif
 
 #define MSM_DAI_PRI_AUXPCM_DT_DEV_ID 1
@@ -61,6 +65,7 @@ enum {
 	ENC_FMT_APTX_HD = ASM_MEDIA_FMT_APTX_HD,
 	ENC_FMT_CELT = ASM_MEDIA_FMT_CELT,
 	ENC_FMT_LDAC = ASM_MEDIA_FMT_LDAC,
+	ENC_FMT_LHDC = ASM_MEDIA_FMT_LHDC,
 	ENC_FMT_APTX_ADAPTIVE = ASM_MEDIA_FMT_APTX_ADAPTIVE,
 	DEC_FMT_APTX_ADAPTIVE = ASM_MEDIA_FMT_APTX_ADAPTIVE,
 	DEC_FMT_MP3 = ASM_MEDIA_FMT_MP3,
@@ -3100,6 +3105,11 @@ static int msm_dai_q6_afe_enc_cfg_get(struct snd_kcontrol *kcontrol,
 				&dai_data->enc_config.data,
 				sizeof(struct asm_ldac_enc_cfg_t));
 			break;
+		case ENC_FMT_LHDC:
+			memcpy(ucontrol->value.bytes.data + format_size,
+				&dai_data->enc_config.data,
+				sizeof(struct asm_lhdc_enc_cfg_t));
+			break;
 		case ENC_FMT_APTX_ADAPTIVE:
 			memcpy(ucontrol->value.bytes.data + format_size,
 				&dai_data->enc_config.data,
@@ -3168,6 +3178,11 @@ static int msm_dai_q6_afe_enc_cfg_put(struct snd_kcontrol *kcontrol,
 			memcpy(&dai_data->enc_config.data,
 				ucontrol->value.bytes.data + format_size,
 				sizeof(struct asm_ldac_enc_cfg_t));
+			break;
+		case ENC_FMT_LHDC:
+			memcpy(&dai_data->enc_config.data,
+				ucontrol->value.bytes.data + format_size,
+				sizeof(struct asm_lhdc_enc_cfg_t));
 			break;
 		case ENC_FMT_APTX_ADAPTIVE:
 			memcpy(&dai_data->enc_config.data,
@@ -5518,6 +5533,17 @@ static int msm_dai_q6_mi2s_hw_params(struct snd_pcm_substream *substream,
 	struct afe_param_id_i2s_cfg *i2s = &dai_data->port_config.i2s;
 #ifdef TFA_ADSP_SUPPORTED
 	u16 port_id = 0;
+<<<<<<< HEAD
+=======
+
+	if (msm_mi2s_get_port_id(dai->id, substream->stream,
+				 &port_id) != 0) {
+		dev_err(dai->dev, "%s: Invalid Port ID 0x%x\n",
+				__func__, port_id);
+		return -EINVAL;
+	}
+#endif
+>>>>>>> 04725f27a7be (techpack: audio: Import Xiaomi changes)
 
 	if (msm_mi2s_get_port_id(dai->id, substream->stream,
 				 &port_id) != 0) {

@@ -2,7 +2,6 @@
  * cs35l41-i2c.c -- CS35l41 I2C driver
  *
  * Copyright 2017 Cirrus Logic, Inc.
- * Copyright (C) 2021 XiaoMi, Inc.
  *
  * Author:	David Rhodes	<david.rhodes@cirrus.com>
  *
@@ -49,15 +48,25 @@ static struct regmap_config cs35l41_regmap_i2c = {
 };
 
 static const struct i2c_device_id cs35l41_id_i2c[] = {
+<<<<<<< HEAD
 	{"cs35l40", 0},
 	{"cs35l41", 0},
 	{}
+=======
+	{ "cs35l40", 0 },
+	{ "cs35l41", 0 },
+	{},
+>>>>>>> 04725f27a7be (techpack: audio: Import Xiaomi changes)
 };
 
 MODULE_DEVICE_TABLE(i2c, cs35l41_id_i2c);
 
 static int cs35l41_i2c_probe(struct i2c_client *client,
+<<<<<<< HEAD
 				const struct i2c_device_id *id)
+=======
+			     const struct i2c_device_id *id)
+>>>>>>> 04725f27a7be (techpack: audio: Import Xiaomi changes)
 {
 	struct cs35l41_private *cs35l41;
 	struct device *dev = &client->dev;
@@ -65,7 +74,10 @@ static int cs35l41_i2c_probe(struct i2c_client *client,
 	const struct regmap_config *regmap_config = &cs35l41_regmap_i2c;
 	int ret;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 04725f27a7be (techpack: audio: Import Xiaomi changes)
 	dev_info(dev, "cs35l41 i2c probe start\n");
 
 	cs35l41 = devm_kzalloc(dev, sizeof(struct cs35l41_private), GFP_KERNEL);
@@ -103,8 +115,13 @@ static int cs35l41_i2c_remove(struct i2c_client *client)
 }
 
 static const struct of_device_id cs35l41_of_match[] = {
+<<<<<<< HEAD
 	{.compatible = "cirrus,cs35l40"},
 	{.compatible = "cirrus,cs35l41"},
+=======
+	{ .compatible = "cirrus,cs35l40" },
+	{ .compatible = "cirrus,cs35l41" },
+>>>>>>> 04725f27a7be (techpack: audio: Import Xiaomi changes)
 	{},
 };
 MODULE_DEVICE_TABLE(of, cs35l41_of_match);
