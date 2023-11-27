@@ -523,7 +523,7 @@
 	};
 
 	chosen {
-		bootargs = "nodebugmon quiet rcu_nocbs=0-7 noirqdebug printk.devkmsg=on rcupdate.rcu_normal_after_boot=1 cgroup_disable=pressure,memory";
+		bootargs = "nodebugmon quiet rcu_nocbs=0-7 noirqdebug printk.devkmsg=on rcupdate.rcu_normal_after_boot=1 cgroup_disable=pressure,memory nosoftlockup mce=ignore_ce";
 	};
 
 	soc: soc { };
