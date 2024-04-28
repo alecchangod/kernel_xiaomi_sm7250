@@ -7,3 +7,5 @@
 	compatible = "qcom,lito";
 	qcom,board-id = <0 0>;
 };
+
+#include "lito-gpu.dtsi"

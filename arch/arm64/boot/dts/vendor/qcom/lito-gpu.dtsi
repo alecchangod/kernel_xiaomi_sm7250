@@ -48,16 +48,21 @@
 
 		opp-500000000 {
 			opp-hz = /bits/ 64 <500000000>;
-			opp-microvolt = <RPMH_REGULATOR_LEVEL_SVS_L1>;
+			opp-microvolt = <RPMH_REGULATOR_LEVEL_SVS_L2>;
 		};
 
 		opp-400000000 {
 			opp-hz = /bits/ 64 <400000000>;
-			opp-microvolt = <RPMH_REGULATOR_LEVEL_SVS>;
+			opp-microvolt = <RPMH_REGULATOR_LEVEL_SVS_L1>;
 		};
 
 		opp-275000000 {
 			opp-hz = /bits/ 64 <275000000>;
+			opp-microvolt = <RPMH_REGULATOR_LEVEL_SVS>;
+		};
+
+		opp-150000000 {
+			opp-hz = /bits/ 64 <150000000>;
 			opp-microvolt = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
 		};
 	};
@@ -76,7 +81,7 @@
 
 		qcom,chipid = <0x06020000>;
 
-		qcom,initial-pwrlevel = <3>;
+		qcom,initial-pwrlevel = <4>;
 
 		qcom,idle-timeout = <58>; /* msecs */
 
@@ -195,8 +200,8 @@
 				#size-cells = <0>;
 
 				qcom,speed-bin = <0>;
-				qcom,ca-target-pwrlevel = <2>;
-				qcom,initial-pwrlevel = <3>;
+				qcom,ca-target-pwrlevel = <4>;
+				qcom,initial-pwrlevel = <4>;
 
 				/* NOM */
 				qcom,gpu-pwrlevel@0 {
@@ -208,7 +213,7 @@
 					qcom,acd-level = <0x802C5FFD>;
 				};
 
-				/* SVS L1 */
+				/* SVS L2 */
 				qcom,gpu-pwrlevel@1 {
 					reg = <1>;
 					qcom,gpu-freq = <500000000>;
@@ -218,7 +223,7 @@
 					qcom,acd-level = <0xA02C5FFD>;
 				};
 
-				/* SVS */
+				/* SVS L1 */
 				qcom,gpu-pwrlevel@2 {
 					reg = <2>;
 					qcom,gpu-freq = <400000000>;
@@ -228,7 +233,7 @@
 					qcom,acd-level = <0xA02C5FFD>;
 				};
 
-				/* Low SVS */
+				/* SVS */
 				qcom,gpu-pwrlevel@3 {
 					reg = <3>;
 					qcom,gpu-freq = <275000000>;
@@ -238,8 +243,18 @@
 					qcom,acd-level = <0x802F5FFD>;
 				};
 
+				/* Low SVS */
 				qcom,gpu-pwrlevel@4 {
 					reg = <4>;
+					qcom,gpu-freq = <150000000>;
+					qcom,bus-freq = <4>;
+					qcom,bus-min = <4>;
+					qcom,bus-max = <6>;
+					qcom,acd-level = <0x802F5FFD>;
+				};
+
+				qcom,gpu-pwrlevel@5 {
+					reg = <5>;
 					qcom,gpu-freq = <0>;
 					qcom,bus-freq = <0>;
 					qcom,bus-min = <0>;
@@ -253,8 +268,8 @@
 
 				qcom,speed-bin = <132>;
 
-				qcom,initial-pwrlevel = <3>;
-				qcom,ca-target-pwrlevel = <2>;
+				qcom,initial-pwrlevel = <4>;
+				qcom,ca-target-pwrlevel = <4>;
 
 				/* NOM */
 				qcom,gpu-pwrlevel@0 {
@@ -266,7 +281,7 @@
 					qcom,acd-level = <0x802C5FFD>;
 				};
 
-				/* SVS L1 */
+				/* SVS L2 */
 				qcom,gpu-pwrlevel@1 {
 					reg = <1>;
 					qcom,gpu-freq = <500000000>;
@@ -276,7 +291,7 @@
 					qcom,acd-level = <0xA02C5FFD>;
 				};
 
-				/* SVS */
+				/* SVS L1*/
 				qcom,gpu-pwrlevel@2 {
 					reg = <2>;
 					qcom,gpu-freq = <400000000>;
@@ -286,7 +301,7 @@
 					qcom,acd-level = <0xA02C5FFD>;
 				};
 
-				/* Low SVS */
+				/* SVS */
 				qcom,gpu-pwrlevel@3 {
 					reg = <3>;
 					qcom,gpu-freq = <275000000>;
@@ -296,8 +311,18 @@
 					qcom,acd-level = <0x802F5FFD>;
 				};
 
+				/* Low SVS */
 				qcom,gpu-pwrlevel@4 {
 					reg = <4>;
+					qcom,gpu-freq = <150000000>;
+					qcom,bus-freq = <4>;
+					qcom,bus-min = <4>;
+					qcom,bus-max = <6>;
+					qcom,acd-level = <0x802F5FFD>;
+				};
+
+				qcom,gpu-pwrlevel@5 {
+					reg = <5>;
 					qcom,gpu-freq = <0>;
 					qcom,bus-freq = <0>;
 					qcom,bus-min = <0>;
@@ -310,10 +335,10 @@
 				#size-cells = <0>;
 
 				qcom,speed-bin = <115>;
-				qcom,initial-pwrlevel = <2>;
-				qcom,ca-target-pwrlevel = <1>;
+				qcom,initial-pwrlevel = <3>;
+				qcom,ca-target-pwrlevel = <3>;
 
-				/* SVS L1 */
+				/* SVS L2 */
 				qcom,gpu-pwrlevel@0 {
 					reg = <0>;
 					qcom,gpu-freq = <540000000>;
@@ -323,7 +348,7 @@
 					qcom,acd-level = <0x802C5FFD>;
 				};
 
-				/* SVS */
+				/* SVS L1 */
 				qcom,gpu-pwrlevel@1 {
 					reg = <1>;
 					qcom,gpu-freq = <400000000>;
@@ -333,7 +358,7 @@
 					qcom,acd-level = <0xA02C5FFD>;
 				};
 
-				/* Low SVS */
+				/* SVS */
 				qcom,gpu-pwrlevel@2 {
 					reg = <2>;
 					qcom,gpu-freq = <275000000>;
@@ -343,8 +368,18 @@
 					qcom,acd-level = <0x802F5FFD>;
 				};
 
+				/* Low SVS */
 				qcom,gpu-pwrlevel@3 {
 					reg = <3>;
+					qcom,gpu-freq = <150000000>;
+					qcom,bus-freq = <4>;
+					qcom,bus-min = <4>;
+					qcom,bus-max = <6>;
+					qcom,acd-level = <0x802F5FFD>;
+				};
+
+				qcom,gpu-pwrlevel@4 {
+					reg = <4>;
 					qcom,gpu-freq = <0>;
 					qcom,bus-freq = <0>;
 					qcom,bus-min = <0>;
