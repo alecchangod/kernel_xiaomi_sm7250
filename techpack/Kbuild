@@ -8,6 +8,8 @@ else ifeq ($(CONFIG_TECHPACK_CAMERA_XIAOMI_CAS),y)
 techpack-dirs += $(srctree)/techpack/camera-xiaomi-cas
 else ifeq ($(CONFIG_TECHPACK_CAMERA_XIAOMI_TABLET),y)
 techpack-dirs += $(srctree)/techpack/camera-xiaomi-tablet
+else ifeq ($(CONFIG_TECHPACK_CAMERA_XIAOMI_SM7250),y)
+techpack-dirs += $(srctree)/techpack/camera-xiaomi-sm7250
 else
 techpack-dirs += $(srctree)/techpack/camera
 endif
@@ -20,6 +22,8 @@ else ifeq ($(CONFIG_TECHPACK_CAMERA_XIAOMI_CAS),y)
 techpack-header-dirs += $(srctree)/techpack/camera-xiaomi-cas
 else ifeq ($(CONFIG_TECHPACK_CAMERA_XIAOMI_TABLET),y)
 techpack-header-dirs += $(srctree)/techpack/camera-xiaomi-tablet
+else ifeq ($(CONFIG_TECHPACK_CAMERA_XIAOMI_SM7250),y)
+techpack-header-dirs += $(srctree)/techpack/camera-xiaomi-sm7250
 else
 techpack-header-dirs += $(srctree)/techpack/camera
 endif
