@@ -957,40 +957,6 @@ EXPORT_SYMBOL(crus_adm_get_params);
 #endif
 
 /*
- * adm_apr_send_pkt : returns 0 on success, negative otherwise.
- */
-int adm_apr_send_pkt(void *data, wait_queue_head_t *wait,
-			int port_idx, int copp_idx, int opcode)
-{
-	int ret = 0;
-	struct param_hdr_v3 param_hdr;
-
-	pr_info("[CSPL] %s: Enter, port_id %d, copp_idx %d, len= %d\n",
-		__func__, port_id, copp_idx, params_length);
-
-	memset(&param_hdr, 0, sizeof(param_hdr));
-	param_hdr.module_id = module_id;
-	param_hdr.instance_id = INSTANCE_ID_0;
-	param_hdr.param_id = param_id;
-	param_hdr.param_size = params_length;
-	ret = adm_get_pp_params(port_id, copp_idx,
-				client_id, NULL, &param_hdr,
-				params);
-	if (ret) {
-		pr_err("%s: get parameters failed ret:%d\n", __func__, ret);
-		ret = -EINVAL;
-		goto done;
-	}
-
-done:
-	pr_debug("%s: Exit, ret = %d\n", __func__, ret);
-
-	return ret;
-}
-EXPORT_SYMBOL(adm_apr_send_pkt);
-#endif
-
-/*
  * With pre-packed data, only the opcode differes from V5 and V6.
  * Use q6common_pack_pp_params to pack the data correctly.
  */

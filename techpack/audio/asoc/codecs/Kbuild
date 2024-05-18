@@ -249,10 +249,6 @@ ifeq ($(KERNEL_BUILD), 1)
 	obj-y	+= wcd937x/
 	obj-y	+= wcd938x/
 	obj-y	+= bolero/
-<<<<<<< HEAD
-	obj-y	+= cs35l41/
-	obj-y	+= tfa98xx/
-=======
 ifeq (y, $(filter y, \
 	$(CONFIG_MACH_XIAOMI_DAGU) \
 	$(CONFIG_MACH_XIAOMI_ELISH) \
@@ -264,7 +260,6 @@ else
 	obj-y	+= cs35l41/
 	obj-y	+= tfa98xx/
 endif
->>>>>>> 04725f27a7be (techpack: audio: Import Xiaomi changes)
 	obj-y	+= rouleur/
 	obj-y	+= wsa883x/
 	obj-y	+= sdm660_cdc/

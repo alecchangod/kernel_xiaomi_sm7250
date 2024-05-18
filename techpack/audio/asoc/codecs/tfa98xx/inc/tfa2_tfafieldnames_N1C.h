@@ -2909,49 +2909,6 @@ enum tfa2_irq {
 	tfa2_irq_stclpr = 34,
 	tfa2_irq_stocpm = 35,
 	tfa2_irq_max = 36,
-<<<<<<< HEAD
-	tfa2_irq_all = -1 /* all irqs */};
-
-#define TFA2_IRQ_NAMETABLE static tfaIrqName_t Tfa2IrqNames[]= {\
-	{ 0, "STVDDS"},\
-	{ 1, "STPLLS"},\
-	{ 2, "STOTDS"},\
-	{ 3, "STOVDS"},\
-	{ 4, "STUVDS"},\
-	{ 5, "STCLKS"},\
-	{ 6, "STMTPB"},\
-	{ 7, "STNOCLK"},\
-	{ 8, "STSPKS"},\
-	{ 9, "STACS"},\
-	{ 10, "STSWS"},\
-	{ 11, "STWDS"},\
-	{ 12, "STAMPS"},\
-	{ 13, "STAREFS"},\
-	{ 14, "STADCCR"},\
-	{ 15, "STBODNOK"},\
-	{ 16, "STBSTCU"},\
-	{ 17, "STBSTHI"},\
-	{ 18, "STBSTOC"},\
-	{ 19, "STBSTPKCUR"},\
-	{ 20, "STBSTVC"},\
-	{ 21, "STBST86"},\
-	{ 22, "STBST93"},\
-	{ 23, "STRCVLD"},\
-	{ 24, "STOCPL"},\
-	{ 25, "STOCPR"},\
-	{ 26, "STMWSRC"},\
-	{ 27, "STMWCFC"},\
-	{ 28, "STMWSMU"},\
-	{ 29, "STCFMER"},\
-	{ 30, "STCFMAC"},\
-	{ 31, "STCLKOOR"},\
-	{ 32, "STTDMER"},\
-	{ 33, "STCLPL"},\
-	{ 34, "STCLPR"},\
-	{ 35, "STOCPM"},\
-	{ 36, "36"},\
-};
-=======
 	tfa2_irq_all = -1 /* all irqs */
 };
 
@@ -2971,4 +2928,3 @@ enum tfa2_irq {
 		{ 33, "STCLPL" },   { 34, "STCLPR" },	  { 35, "STOCPM" },    \
 		{ 36, "36" },                                                  \
 	};
->>>>>>> 04725f27a7be (techpack: audio: Import Xiaomi changes)

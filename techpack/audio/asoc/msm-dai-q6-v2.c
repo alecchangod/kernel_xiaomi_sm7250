@@ -5533,8 +5533,6 @@ static int msm_dai_q6_mi2s_hw_params(struct snd_pcm_substream *substream,
 	struct afe_param_id_i2s_cfg *i2s = &dai_data->port_config.i2s;
 #ifdef TFA_ADSP_SUPPORTED
 	u16 port_id = 0;
-<<<<<<< HEAD
-=======
 
 	if (msm_mi2s_get_port_id(dai->id, substream->stream,
 				 &port_id) != 0) {
@@ -5543,15 +5541,7 @@ static int msm_dai_q6_mi2s_hw_params(struct snd_pcm_substream *substream,
 		return -EINVAL;
 	}
 #endif
->>>>>>> 04725f27a7be (techpack: audio: Import Xiaomi changes)
 
-	if (msm_mi2s_get_port_id(dai->id, substream->stream,
-				 &port_id) != 0) {
-		dev_err(dai->dev, "%s: Invalid Port ID 0x%x\n",
-				__func__, port_id);
-		return -EINVAL;
-	}
-#endif
 	dai_data->channels = params_channels(params);
 	switch (dai_data->channels) {
 	case 15:

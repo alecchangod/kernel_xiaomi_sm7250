@@ -100,9 +100,12 @@
 #if defined (CONFIG_MACH_XIAOMI_ALIOTH)
 #define CS35L41_SPEAKER_NAME "cs35l41.1-0040"
 #define CS35L41_RECEIVER_NAME "cs35l41.1-0041"
-#else
+#elif defined (CONFIG_MACH_XIAOMI_SM8250)
 #define CS35L41_SPEAKER_NAME "cs35l41.1-0040"
 #define CS35L41_RECEIVER_NAME "cs35l41.1-0042"
+#else
+#define CS35L41_SPEAKER_NAME "cs35l41.2-0040"
+#define CS35L41_RECEIVER_NAME "cs35l41.2-0042"
 #endif
 
 #if defined(CONFIG_MACH_XIAOMI_MUNCH)
@@ -215,26 +218,6 @@ static struct snd_soc_codec_conf cs35l41_codec_conf[] = {
 	},
 };
 #endif
-
-//static atomic_t cs35l41_mclk_rsc_ref;
-#define CS35L41_SPEAKER_NAME "cs35l41.2-0040"
-#define CS35L41_RECEIVER_NAME "cs35l41.2-0042"
-struct snd_soc_dai_link_component cs35l41_codec_components[] = {
-	{
-		.name = CS35L41_SPEAKER_NAME,
-		//.dai_name = "cs35l41-pcm",
-		.dai_name = CS35L41_SPEAKER_NAME,
-	},
-};
-
-static struct snd_soc_codec_conf cs35l41_codec_conf[] = {
-	{
-		.dev_name	= CS35L41_SPEAKER_NAME,
-		.name_prefix	= "SPK",
-	},
-};
-
-
 
 enum {
 	RX_PATH = 0,

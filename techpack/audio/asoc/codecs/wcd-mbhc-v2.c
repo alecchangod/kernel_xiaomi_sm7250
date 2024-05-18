@@ -1820,13 +1820,10 @@ static int wcd_mbhc_usbc_ana_event_handler(struct notifier_block *nb,
 	dev_dbg(mbhc->component->dev, "%s: mode = %lu\n", __func__, mode);
 
 	if (mode == POWER_SUPPLY_TYPEC_SINK_AUDIO_ADAPTER) {
-<<<<<<< HEAD
 #ifdef CONFIG_AUDIO_UART_DEBUG
 		msm_cdc_pinctrl_select_active_state(config->uart_audio_switch_gpio_p);
 		dev_dbg(mbhc->component->dev, "disable uart\n");
 #endif
-=======
->>>>>>> 04725f27a7be (techpack: audio: Import Xiaomi changes)
 		if (mbhc->mbhc_cb->clk_setup) {
 			mbhc->mbhc_cb->clk_setup(mbhc->component, false);
 			mbhc->mbhc_cb->clk_setup(mbhc->component, true);
@@ -1834,31 +1831,28 @@ static int wcd_mbhc_usbc_ana_event_handler(struct notifier_block *nb,
 		/* insertion detected, enable L_DET_EN */
 		WCD_MBHC_REG_UPDATE_BITS(WCD_MBHC_L_DET_EN, 0);
 		WCD_MBHC_REG_UPDATE_BITS(WCD_MBHC_L_DET_EN, 1);
-<<<<<<< HEAD
+		WCD_MBHC_REG_READ(WCD_MBHC_L_DET_EN, det_status);
+		pr_debug("%s: det_status = %x\n", __func__, det_status);
 	} else {
 #ifdef CONFIG_AUDIO_UART_DEBUG
 		msm_cdc_pinctrl_select_sleep_state(config->uart_audio_switch_gpio_p);
 		dev_dbg(mbhc->component->dev, "enable uart\n");
 #endif
-=======
+		if (mode == POWER_SUPPLY_TYPEC_NONE && mbhc->current_plug == MBHC_PLUG_TYPE_NONE) {
+			mbhc->hs_detect_work_stop = true;
+			/* Disable HW FSM */
+			WCD_MBHC_REG_UPDATE_BITS(WCD_MBHC_FSM_EN, 0);
+			WCD_MBHC_REG_UPDATE_BITS(WCD_MBHC_BTN_ISRC_CTL, 0);
+			mbhc->extn_cable_hph_rem = false;
 
-		WCD_MBHC_REG_READ(WCD_MBHC_L_DET_EN, det_status);
-		pr_debug("%s: det_status = %x\n", __func__, det_status);
-	} else if (mode == POWER_SUPPLY_TYPEC_NONE && mbhc->current_plug == MBHC_PLUG_TYPE_NONE) {
-		mbhc->hs_detect_work_stop = true;
-		/* Disable HW FSM */
-		WCD_MBHC_REG_UPDATE_BITS(WCD_MBHC_FSM_EN, 0);
-		WCD_MBHC_REG_UPDATE_BITS(WCD_MBHC_BTN_ISRC_CTL, 0);
-		mbhc->extn_cable_hph_rem = false;
+			WCD_MBHC_REG_UPDATE_BITS(WCD_MBHC_L_DET_EN, 0);
+			if (mbhc->mbhc_cb->clk_setup)
+			    mbhc->mbhc_cb->clk_setup(mbhc->component, false);
+			WCD_MBHC_REG_UPDATE_BITS(WCD_MBHC_MECH_DETECTION_TYPE, 1);
 
-		WCD_MBHC_REG_UPDATE_BITS(WCD_MBHC_L_DET_EN, 0);
-		if (mbhc->mbhc_cb->clk_setup)
-		    mbhc->mbhc_cb->clk_setup(mbhc->component, false);
-		WCD_MBHC_REG_UPDATE_BITS(WCD_MBHC_MECH_DETECTION_TYPE, 1);
-
-		WCD_MBHC_REG_READ(WCD_MBHC_L_DET_EN, det_status);
-		pr_debug("%s: det_status = %x\n", __func__, det_status);
->>>>>>> 04725f27a7be (techpack: audio: Import Xiaomi changes)
+			WCD_MBHC_REG_READ(WCD_MBHC_L_DET_EN, det_status);
+			pr_debug("%s: det_status = %x\n", __func__, det_status);
+		}
 	}
 	return 0;
 }

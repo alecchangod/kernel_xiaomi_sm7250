@@ -1600,21 +1600,6 @@ enum tfa9874_irq {
 	tfa9874_irq_sttdmer = 6,
 	tfa9874_irq_stnoclk = 7,
 	tfa9874_irq_max = 8,
-<<<<<<< HEAD
-	tfa9874_irq_all = -1 /* all irqs */};
-
-#define TFA9874_IRQ_NAMETABLE static tfaIrqName_t Tfa9874IrqNames[]= {\
-	{ 0, "STVDDS"},\
-	{ 1, "STBSTOC"},\
-	{ 2, "STOTDS"},\
-	{ 3, "STOCPR"},\
-	{ 4, "STUVDS"},\
-	{ 5, "STMANALARM"},\
-	{ 6, "STTDMER"},\
-	{ 7, "STNOCLK"},\
-	{ 8, "8"},\
-};
-=======
 	tfa9874_irq_all = -1 /* all irqs */
 };
 
@@ -1624,5 +1609,4 @@ enum tfa9874_irq {
 		{ 3, "STOCPR" },  { 4, "STUVDS" },  { 5, "STMANALARM" },       \
 		{ 6, "STTDMER" }, { 7, "STNOCLK" }, { 8, "8" },                \
 	};
->>>>>>> 04725f27a7be (techpack: audio: Import Xiaomi changes)
 #endif /* _TFA9874_TFAFIELDNAMES_H */
