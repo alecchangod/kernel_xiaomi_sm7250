@@ -249,8 +249,11 @@ CDEFINES +=	-DANI_LITTLE_BYTE_ENDIAN \
 		-Werror\
 		-D__linux__
 
-ifeq ((y, $(filter y,$(CONFIG_MACH_XIAOMI_LMI) $(CONFIG_MACH_XIAOMI_MUNCH))) ||
-		(,$(filter $(TARGET_PRODUCT), picasso picassoin)))
+ifeq (y, $(filter y,$(CONFIG_MACH_XIAOMI_LMI) $(CONFIG_MACH_XIAOMI_MUNCH)))
+CDEFINES += -DTFA_ADSP_SUPPORTED
+endif
+
+ifeq (,$(filter $(TARGET_PRODUCT), picasso picassoin))
 CDEFINES += -DTFA_ADSP_SUPPORTED
 endif
 
