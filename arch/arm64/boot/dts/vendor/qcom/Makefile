@@ -143,11 +143,8 @@ dtbo-$(CONFIG_ARCH_LITO) += lito-rumi-overlay.dtbo \
                 lito-v2-qrd-overlay.dtbo \
                 litomagnus-mtp-overlay.dtbo \
                 litomagnus-cdp-overlay.dtbo \
-				monet-sm7250-overlay.dtbo \
                 orchid-mtp-overlay.dtbo \
-                orchid-cdp-overlay.dtbo \
-				picasso-sm7250-overlay.dtbo \
-				vangogh-sm7250-overlay.dtbo
+                orchid-cdp-overlay.dtbo
 
 lito-rumi-overlay.dtbo-base := lito.dtb lito-v2.dtb
 lito-mtp-overlay.dtbo-base := lito.dtb
@@ -161,11 +158,8 @@ lito-qrd-overlay.dtbo-base := lito.dtb
 lito-v2-qrd-overlay.dtbo-base := lito-v2.dtb
 litomagnus-mtp-overlay.dtbo-base := litomagnus.dtb
 litomagnus-cdp-overlay.dtbo-base := litomagnus.dtb
-monet-sm7250-overlay.dtbo-base := lito.dtb lito-v2.dtb
 orchid-mtp-overlay.dtbo-base := orchid.dtb
 orchid-cdp-overlay.dtbo-base := orchid.dtb
-picasso-sm7250-overlay.dtbo-base := lito.dtb lito-v2.dtb
-vangogh-sm7250-overlay.dtbo-base := lito.dtb lito-v2.dtb
 else
 dtb-$(CONFIG_ARCH_LITO) += lito-rumi.dtb \
                 lito-mtp.dtb \
