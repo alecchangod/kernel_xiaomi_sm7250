@@ -69,6 +69,9 @@ enum {
 	HW_PLATFORM_L3A = 48,
     HW_PLATFORM_L11R = 50,
 	HW_PLATFORM_L81A = 51,
+	HW_PLATFORM_J9  = 52,
+	HW_PLATFORM_G7A = 53,
+	HW_PLATFORM_J9A = 54,
 	HW_PLATFORM_INVALID
 };
 
@@ -103,6 +106,9 @@ const char *hw_platform[] = {
 	[HW_PLATFORM_L3A] = "PSYCHE",
     [HW_PLATFORM_L11R] = "MUNCH",
     [HW_PLATFORM_L81A] = "DAGU",
+	[HW_PLATFORM_J9]  = "MONET",
+	[HW_PLATFORM_G7A] = "PICASSO",
+	[HW_PLATFORM_J9A] = "VANGOGH",
 };
 
 enum {
@@ -2100,6 +2106,8 @@ EXPORT_SYMBOL(get_hw_country_version);
 uint32_t get_hw_version_platform(void)
 {
 	uint32_t hw_type = socinfo_get_platform_type();
+	if (hw_type == HW_PLATFORM_G7A)
+		return HARDWARE_PLATFORM_PICASSO;
 	if (hw_type == HW_PLATFORM_J2)
 		return HARDWARE_PLATFORM_UMI;
 	if (hw_type == HW_PLATFORM_J1)
@@ -2110,6 +2118,10 @@ uint32_t get_hw_version_platform(void)
 		return HARDWARE_PLATFORM_CAS;
 	if (hw_type == HW_PLATFORM_J3S)
 		return HARDWARE_PLATFORM_APOLLO;
+	if (hw_type == HW_PLATFORM_J9)
+		return HARDWARE_PLATFORM_MONET;
+	if (hw_type == HW_PLATFORM_J9A)
+		return HARDWARE_PLATFORM_VANGOGH;
 	if (hw_type == HW_PLATFORM_K11A)
 		return HARDWARE_PLATFORM_ALIOTH;
 	if (hw_type == HW_PLATFORM_K81)
