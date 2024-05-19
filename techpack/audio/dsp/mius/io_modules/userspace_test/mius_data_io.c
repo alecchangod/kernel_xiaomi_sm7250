@@ -77,8 +77,8 @@ int simulating_thread(void *context)
 int32_t mius_data_io_write(uint32_t message_id, const char *data,
 			   size_t data_size)
 {
-		return 0;
-	}
+	return 0;
+}
 
 int32_t mius_data_io_transact(uint32_t message_id, const char *data,
 			      size_t data_size, char *output_data,

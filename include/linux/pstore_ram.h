@@ -64,8 +64,8 @@ struct persistent_ram_zone {
 };
 
 struct pmsg_start_t {
-       size_t         start;
-       spinlock_t     lock;
+	size_t start;
+	spinlock_t lock;
 };
 
 struct persistent_ram_zone *persistent_ram_new(phys_addr_t start, size_t size,

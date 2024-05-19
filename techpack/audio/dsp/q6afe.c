@@ -455,6 +455,12 @@ static int q6afe_load_avcs_modules(int num_modules, u16 port_id,
 					goto load_unload;
 				}
 
+				if (format_id == ENC_CODEC_TYPE_LHDC) {
+					pm[i]->payload->load_unload_info[0].id1 =
+						AVS_MODULE_ID_DEPACKETIZER_COP_V1;
+					goto load_unload;
+				}
+
 				pm[i]->payload->load_unload_info[1].module_type =
 						AMDB_MODULE_TYPE_DECODER;
 				pm[i]->payload->load_unload_info[1].id1 =
@@ -538,7 +544,6 @@ struct afe_cspl_state cspl_afe = {
 };
 EXPORT_SYMBOL(cspl_afe);
 #endif
-
 int afe_get_spk_initial_cal(void)
 {
 	return this_afe.initial_cal;

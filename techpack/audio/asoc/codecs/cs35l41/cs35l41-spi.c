@@ -92,13 +92,8 @@ static int cs35l41_spi_remove(struct spi_device *spi)
 }
 
 static const struct of_device_id cs35l41_of_match[] = {
-<<<<<<< HEAD
-	{.compatible = "cirrus,cs35l40"},
-	{.compatible = "cirrus,cs35l41"},
-=======
 	{ .compatible = "cirrus,cs35l40" },
 	{ .compatible = "cirrus,cs35l41" },
->>>>>>> 04725f27a7be (techpack: audio: Import Xiaomi changes)
 	{},
 };
 MODULE_DEVICE_TABLE(of, cs35l41_of_match);

@@ -82,6 +82,57 @@ static int maxF(int a, int b) {
 }
 #endif
 
+#if defined(CONFIG_MACH_XIAOMI_PSYCHE) || defined(CONFIG_MACH_XIAOMI_MUNCH) || defined(CONFIG_MACH_XIAOMI_DAGU)
+#include <linux/debugfs.h>
+
+#define HEADSET_STATUS_RECORD_INDEX_PLUGIN_HEADSET (3)
+#define HEADSET_STATUS_RECORD_INDEX_PLUGIN_HEADPHONE (1)
+#define HEADSET_STATUS_RECORD_INDEX_PLUGOUT (0)
+
+#define HEADSET_EVENT_PLUGIN_HEADPHONE (0)
+#define HEADSET_EVENT_PLUGIN_MICROPHONE (4)
+#define HEADSET_EVENT_PLUGIN_JACK (8)
+
+#define HEADSET_EVENT_KEY_PREVIOUS_DOWN (0)
+#define HEADSET_EVENT_KEY_PREVIOUS_UP (4)
+
+#define HEADSET_EVENT_KEY_NEXT_DOWN (0)
+#define HEADSET_EVENT_KEY_NEXT_UP (4)
+
+#define HEADSET_EVENT_KEY_MEDIA_DOWN (0)
+#define HEADSET_EVENT_KEY_MEDIA_UP (4)
+
+#define HEADSET_EVENT_PLUGOUT_HEADPHONE (0)
+#define HEADSET_EVENT_PLUGOUT_MICROPHONE (4)
+#define HEADSET_EVENT_PLUGOUT_JACK (8)
+
+#define DEBUGFS_DIR_NAME "mbhc"
+#define DEBUGFS_HEADSET_STATUS_FILE_NAME "headset_status"
+#define HEADSET_EVENT_MAX (5)
+
+static struct dentry* mbhc_debugfs_dir;
+
+static ssize_t headset_status_read(struct file *filp, char __user *buffer,
+		size_t count, loff_t *ppos);
+static ssize_t headset_status_write(struct file *filp, const char __user *buffer,
+		size_t count, loff_t *ppos);
+static void add_headset_event(int status, int mask, int jackstatus);
+static u16 headset_status[HEADSET_EVENT_MAX] = {0,0,0,0,0};
+
+// When the number of events is more than 15, no more growth.
+static int maxF(int a, int b) {
+	int x = 0;
+	x = a & (0xF << b);
+	x += 0x1 << b;
+	if (x > (0xF << b)) {
+		x = 0xF << b;
+		return (x + (a & ~(0xF << b)));
+	} else {
+		return a + (0x1 << b);
+	}
+}
+#endif
+
 void wcd_mbhc_jack_report(struct wcd_mbhc *mbhc,
 			  struct snd_soc_jack *jack, int status, int mask)
 {

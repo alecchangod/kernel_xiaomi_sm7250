@@ -5572,6 +5572,17 @@ static int get_ec_ref_port_id(int value, int *index)
 		*index = 40;
 		port_id = AFE_PORT_ID_QUINARY_TDM_TX;
 		break;
+#ifdef CONFIG_MACH_XIAOMI_SM8250
+	case 41:
+		*index = 41;
+		port_id = AFE_PORT_ID_TERTIARY_TDM_RX;
+		break;
+#elif defined(CONFIG_MACH_XIAOMI_SM8250)
+	case 41:
+		*index = 43;
+		port_id = AFE_PORT_ID_TERTIARY_TDM_RX;
+		break;
+#else
 	case 41:
 		*index = 41;
 		port_id = AFE_PORT_ID_PRIMARY_TDM_RX;
@@ -5580,10 +5591,7 @@ static int get_ec_ref_port_id(int value, int *index)
 		*index = 42;
 		port_id = AFE_PORT_ID_PRIMARY_TDM_TX;
 		break;
-	case 43:
-		*index = 43;
-		port_id = AFE_PORT_ID_TERTIARY_TDM_RX;
-		break;
+#endif
 	default:
 		*index = 0; /* NONE */
 		pr_err("%s: Invalid value %d\n", __func__, value);
@@ -5642,8 +5650,11 @@ static const char *const ec_ref_rx[] = { "None", "SLIM_RX", "I2S_RX",
 	"SLIM_7_RX", "RX_CDC_DMA_RX_0", "RX_CDC_DMA_RX_1", "RX_CDC_DMA_RX_2",
 	"RX_CDC_DMA_RX_3", "TX_CDC_DMA_TX_0", "TERT_TDM_RX_2", "SEC_TDM_TX_0",
 	"DISPLAY_PORT1", "SEN_MI2S_RX", "SENARY_MI2S_TX", "QUIN_TDM_TX_0",
-	"PRI_TDM_RX_0", "PRI_TDM_TX_0",
+#if defined(CONFIG_MACH_XIAOMI_SM8250) || defined(CONFIG_MACH_XIAOMI_SM7250)
 	"TERT_TDM_RX_0",
+#else
+	"PRI_TDM_RX_0", "PRI_TDM_TX_0",
+#endif
 };
 
 static const struct soc_enum msm_route_ec_ref_rx_enum[] = {
