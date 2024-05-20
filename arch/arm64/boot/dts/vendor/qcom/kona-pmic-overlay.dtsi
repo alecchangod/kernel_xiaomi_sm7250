@@ -53,7 +53,6 @@
 			power-source = <0>;
 		};
 	};
-
 	imu_clkin {
 		imu_clkin_default: imu_clkin_default {
 			pins = "gpio3";

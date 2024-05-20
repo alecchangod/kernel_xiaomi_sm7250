@@ -411,7 +411,6 @@
 
 	mi,mdss-panel-delay-before-fod-hbm-on;
 	mi,mdss-panel-delay-before-fod-hbm-off;
-	mi,mdss-panel-fod-skip-nolp;
 
 	qcom,disp-fod-dim-lut =
 	/* brightness  alpha */

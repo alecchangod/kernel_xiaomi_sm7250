@@ -45,7 +45,6 @@
 				<83 0 &pdc 97 0>,
 				<84 0 &pdc 98 0>,
 				<86 0 &pdc 99 0>,
-				<87 0 &pdc 100 0>,
 				<88 0 &pdc 101 0>,
 				<89 0 &pdc 102 0>,
 				<92 0 &pdc 103 0>,
@@ -2407,7 +2406,7 @@
 			config {
 				pins = "gpio94";
 				bias-disable; /* No PULL */
-				drive-strength = <4>; /* 4 MA */
+				drive-strength = <8>; /* 8 MA */
 			};
 		};
 
@@ -2421,7 +2420,7 @@
 			config {
 				pins = "gpio94";
 				bias-pull-down; /* PULL DOWN */
-				drive-strength = <4>; /* 4 MA */
+				drive-strength = <8>; /* 8 MA */
 			};
 		};
 
