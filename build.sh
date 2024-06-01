@@ -16,25 +16,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if ! [ -d "$HOME/tc/aosp-clang" ]; then
-echo "aosp clang not found! Cloning..."
-if ! git clone -q https://gitlab.com/ThankYouMario/android_prebuilts_clang-standalone.git --depth=1 ~/tc/aosp-clang; then
-echo "Cloning failed! Aborting..."
-exit 1
-fi
-fi
+cwd=$(pwd)
+mkdir -p "$HOME/toolchains/neutron-clang"
+cd "$HOME/toolchains/neutron-clang"
+bash <(curl -s "https://raw.githubusercontent.com/Neutron-Toolchains/antman/main/antman") -S=05012024
+bash <(curl -s "https://raw.githubusercontent.com/Neutron-Toolchains/antman/main/antman") --patch=glibc
+cd $cwd
 
-if ! [ -d "$HOME/tc/aarch64-linux-android-4.9" ]; then
-echo "aarch64-linux-android-4.9 not found! Cloning..."
-if ! git clone -q https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9.git --depth=1 --single-branch ~/tc/aarch64-linux-android-4.9; then
-echo "Cloning failed! Aborting..."
-exit 1
-fi
-fi
-
-GCC_64_DIR="$HOME/tc/aarch64-linux-android-4.9"
-KBUILD_COMPILER_STRING=$($HOME/tc/aosp-clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
-KBUILD_LINKER_STRING=$($HOME/tc/aosp-clang/bin/ld.lld --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//' | sed 's/(compatible with [^)]*)//')
+GCC_64_DIR="$HOME/toolchains/neutron-clang"
+KBUILD_COMPILER_STRING=$($HOME/toolchains/neutron-clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
+KBUILD_LINKER_STRING=$($HOME/toolchains/neutron-clang/bin/ld.lld --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//' | sed 's/(compatible with [^)]*)//')
 export KBUILD_COMPILER_STRING
 export KBUILD_LINKER_STRING
 
@@ -75,7 +66,8 @@ CC=clang \
 LLVM=1 \
 LLVM_IAS=1 \
 CLANG_TRIPLE=aarch64-linux-gnu- \
-CROSS_COMPILE=$GCC_64_DIR/bin/aarch64-linux-android- \
+CROSS_COMPILE=$GCC_64_DIR/bin/aarch64-linux-gnu- \
+CROSS_COMPILE_COMPAT=$GCC_64_DIR/bin/arm-linux-gnueabi- \
 -j${KEBABS}"
 
 dts_source=arch/arm64/boot/dts/vendor/qcom
@@ -83,7 +75,7 @@ dts_source=arch/arm64/boot/dts/vendor/qcom
 START=$(date +"%s")
 
 # Set compiler Path
-export PATH="$HOME/tc/aosp-clang/bin:$PATH"
+export PATH="$HOME/toolchains/neutron-clang/bin:$PATH"
 export LD_LIBRARY_PATH=${HOME}/tc/aosp-clang/lib64:$LD_LIBRARY_PATH
 
 echo "------ Starting Compilation ------"
