@@ -16,12 +16,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+if ! [ -d "$HOME/toolchains/neutron-clang" ]; then
 cwd=$(pwd)
 mkdir -p "$HOME/toolchains/neutron-clang"
 cd "$HOME/toolchains/neutron-clang"
 bash <(curl -s "https://raw.githubusercontent.com/Neutron-Toolchains/antman/main/antman") -S=05012024
 bash <(curl -s "https://raw.githubusercontent.com/Neutron-Toolchains/antman/main/antman") --patch=glibc
 cd $cwd
+fi
 
 GCC_64_DIR="$HOME/toolchains/neutron-clang"
 KBUILD_COMPILER_STRING=$($HOME/toolchains/neutron-clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
