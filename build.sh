@@ -39,23 +39,11 @@ export KBUILD_COMPILER_STRING
 export KBUILD_LINKER_STRING
 
 DEVICE=$1
-TYPE=$2
-IS_KSU=""
 
 if [ "${DEVICE}" = "monet" ]; then
-if [ "${TYPE}" = "ksu" ]; then
-DEFCONFIG=monet-ksu_defconfig
-IS_KSU="-ksu"
-else
 DEFCONFIG=monet_defconfig
-fi
 else if [ "${DEVICE}" = "vangogh" ]; then
-if [ "${TYPE}" = "ksu" ]; then
-DEFCONFIG=vangogh-ksu_defconfig
-IS_KSU="-ksu"
-else
 DEFCONFIG=vangogh_defconfig
-fi
 fi
 fi
 
@@ -68,7 +56,7 @@ DATE=$(date '+%Y%m%d-%H%M')
 # Set our directory
 OUT_DIR=out/
 
-VERSION="Skizo${IS_KSU}-${DEVICE}-${DATE}"
+VERSION="Skizo-ksu-${DEVICE}-${DATE}"
 
 # Export Zip name
 export ZIPNAME="${VERSION}.zip"
