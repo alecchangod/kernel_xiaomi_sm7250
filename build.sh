@@ -49,6 +49,14 @@ IS_KSU="-ksu"
 else
 DEFCONFIG=monet_defconfig
 fi
+else if [ "${DEVICE}" = "vangogh" ]; then
+if [ "${TYPE}" = "ksu" ]; then
+DEFCONFIG=vangogh-ksu_defconfig
+IS_KSU="-ksu"
+else
+DEFCONFIG=vangogh_defconfig
+fi
+fi
 fi
 
 #
@@ -112,9 +120,7 @@ END=$(date +"%s")
 DIFF=$((END - START))
 zipname="$VERSION.zip"
 if [ -f "out/arch/arm64/boot/Image" ] && [ -f "out/arch/arm64/boot/dtb" ]; then
-        if [ "${DEVICE}" = "monet" ]; then
-          git clone -q https://github.com/alecchangod/AnyKernel3.git -b monet
-	fi
+	git clone -q https://github.com/alecchangod/AnyKernel3.git -b ${DEVICE}
 	cp out/arch/arm64/boot/Image AnyKernel3
 	cp out/arch/arm64/boot/dtb AnyKernel3
 	rm -f *zip
