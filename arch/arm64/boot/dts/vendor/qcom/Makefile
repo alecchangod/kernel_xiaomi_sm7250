@@ -162,10 +162,14 @@ endif
 
 ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
 dtbo-$(CONFIG_ARCH_LITO) += monet-sm7250-overlay.dtbo
+dtbo-$(CONFIG_ARCH_LITO) += vangogh-sm7250-overlay.dtbo
 
 monet-sm7250-overlay.dtbo-base := lito.dtb lito-v2.dtb
+
+vangogh-sm7250-overlay.dtbo-base := lito.dtb lito-v2.dtb
 else
 dtb-$(CONFIG_ARCH_LITO) += monet-sm7250.dtb
+dtb-$(CONFIG_ARCH_LITO) += vangogh-sm7250.dtb
 endif
 
 ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
