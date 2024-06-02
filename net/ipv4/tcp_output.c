@@ -1107,7 +1107,7 @@ static void tcp_internal_pacing(struct sock *sk, const struct sk_buff *skb)
 
 static bool tcp_pacing_check(const struct sock *sk)
 {
-	return tcp_needs_internal_pacing(sk) &&
+	return tcp_needs_internal_pacing((struct sock *)sk) &&
 	       hrtimer_is_queued(&tcp_sk(sk)->pacing_timer);
 }
 
