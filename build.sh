@@ -113,8 +113,6 @@ if [ -f "out/arch/arm64/boot/Image" ] && [ -f "out/arch/arm64/boot/dtb" ]; then
 	echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
 	echo ""
 	echo -e ${zipname} " is ready!"
-	echo ""
-        curl --upload-file ${zipname} https://free.keep.sh
 else
 	echo -e "\n Compilation Failed!"
 fi
