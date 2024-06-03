@@ -2017,7 +2017,7 @@ void sdhci_set_bus_width(struct sdhci_host *host, int width)
 }
 EXPORT_SYMBOL_GPL(sdhci_set_bus_width);
 
-//* void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing)
+void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing)
 {
 	u16 ctrl_2;
 
@@ -2038,7 +2038,7 @@ EXPORT_SYMBOL_GPL(sdhci_set_bus_width);
 	else if (timing == MMC_TIMING_MMC_HS400)
 		ctrl_2 |= SDHCI_CTRL_HS400; /* Non-standard */
 }
-EXPORT_SYMBOL_GPL(sdhci_set_uhs_signaling); *//
+EXPORT_SYMBOL_GPL(sdhci_set_uhs_signaling);
 
 void sdhci_cfg_irq(struct sdhci_host *host, bool enable, bool sync)
 {
