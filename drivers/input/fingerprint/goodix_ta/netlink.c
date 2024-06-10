@@ -15,11 +15,11 @@
 #define NETLINK_TEST 25
 #define MAX_MSGSIZE 32
 int stringlength(char *s);
-void sendnlmsg(char *message);
+void sendnlmsg_ta(char *message);
 static int pid = -1;
-struct sock *nl_sk = NULL;
+struct sock *nl_sk_ta = NULL;
 
-void sendnlmsg(char *message)
+void sendnlmsg_ta(char *message)
 {
 	struct sk_buff *skb_1;
 	struct nlmsghdr *nlh;
@@ -27,7 +27,7 @@ void sendnlmsg(char *message)
 	int slen = 0;
 	int ret = 0;
 
-	if (!message || !nl_sk || !pid) {
+	if (!message || !nl_sk_ta || !pid) {
 		return;
 	}
 
@@ -44,7 +44,7 @@ void sendnlmsg(char *message)
 	NETLINK_CB(skb_1).dst_group = 0;
 	message[slen] = '\0';
 	memcpy(NLMSG_DATA(nlh), message, slen + 1);
-	ret = netlink_unicast(nl_sk, skb_1, pid, MSG_DONTWAIT);
+	ret = netlink_unicast(nl_sk_ta, skb_1, pid, MSG_DONTWAIT);
 
 	if (!ret) {
 		/*kfree_skb(skb_1);*/
@@ -53,7 +53,7 @@ void sendnlmsg(char *message)
 }
 
 
-void nl_data_ready(struct sk_buff *__skb)
+void nl_data_ready_ta(struct sk_buff *__skb)
 {
 	struct sk_buff *skb;
 	struct nlmsghdr *nlh;
@@ -69,18 +69,18 @@ void nl_data_ready(struct sk_buff *__skb)
 }
 
 
-int netlink_init(void)
+int netlink_init_ta(void)
 {
 	struct netlink_kernel_cfg netlink_cfg;
 	memset(&netlink_cfg, 0, sizeof(struct netlink_kernel_cfg));
 	netlink_cfg.groups = 0;
 	netlink_cfg.flags = 0;
-	netlink_cfg.input = nl_data_ready;
+	netlink_cfg.input = nl_data_ready_ta;
 	netlink_cfg.cb_mutex = NULL;
-	nl_sk = netlink_kernel_create(&init_net, NETLINK_TEST,
+	nl_sk_ta = netlink_kernel_create(&init_net, NETLINK_TEST,
 					&netlink_cfg);
 
-	if (!nl_sk) {
+	if (!nl_sk_ta) {
 		pr_err("create netlink socket error\n");
 		return 1;
 	}
@@ -88,11 +88,11 @@ int netlink_init(void)
 	return 0;
 }
 
-void netlink_exit(void)
+void netlink_exit_ta(void)
 {
-	if (nl_sk != NULL) {
-		netlink_kernel_release(nl_sk);
-		nl_sk = NULL;
+	if (nl_sk_ta != NULL) {
+		netlink_kernel_release(nl_sk_ta);
+		nl_sk_ta = NULL;
 	}
 
 	pr_info("self module exited\n");
