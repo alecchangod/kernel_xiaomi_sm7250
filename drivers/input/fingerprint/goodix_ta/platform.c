@@ -23,7 +23,7 @@
 #include <linux/platform_device.h>
 #endif
 
-int gf_parse_dts(struct gf_dev *gf_dev)
+int gf_parse_dts_ta(struct gf_dev *gf_dev)
 {
 #ifdef GF_PW_CTL
 	/*get pwr resource*/
@@ -58,7 +58,7 @@ int gf_parse_dts(struct gf_dev *gf_dev)
 	return 0;
 }
 
-void gf_cleanup(struct gf_dev *gf_dev)
+void gf_cleanup_ta(struct gf_dev *gf_dev)
 {
 	pr_info("[info] %s\n", __func__);
 
@@ -82,7 +82,7 @@ void gf_cleanup(struct gf_dev *gf_dev)
 #endif
 }
 
-int gf_power_on(struct gf_dev *gf_dev)
+int gf_power_on_ta(struct gf_dev *gf_dev)
 {
 	int rc = 0;
 #ifdef GF_PW_CTL
@@ -99,7 +99,7 @@ int gf_power_on(struct gf_dev *gf_dev)
 	return rc;
 }
 
-int gf_power_off(struct gf_dev *gf_dev)
+int gf_power_off_ta(struct gf_dev *gf_dev)
 {
 	int rc = 0;
 #ifdef GF_PW_CTL
@@ -115,7 +115,7 @@ int gf_power_off(struct gf_dev *gf_dev)
 	return rc;
 }
 
-int gf_hw_reset(struct gf_dev *gf_dev, unsigned int delay_ms)
+int gf_hw_reset_ta(struct gf_dev *gf_dev, unsigned int delay_ms)
 {
 	if (gf_dev == NULL) {
 		pr_info("Input buff is NULL.\n");
@@ -130,7 +130,7 @@ int gf_hw_reset(struct gf_dev *gf_dev, unsigned int delay_ms)
 	return 0;
 }
 
-int gf_irq_num(struct gf_dev *gf_dev)
+int gf_irq_num_ta(struct gf_dev *gf_dev)
 {
 	if (gf_dev == NULL) {
 		pr_info("Input buff is NULL.\n");
