@@ -578,16 +578,6 @@ static int gf_open(struct inode *inode, struct file *filp)
 #endif
 
 	if (status == 0) {
-#ifdef GF_PW_CTL
-		rc = gpio_request(gf_dev->pwr_gpio, "goodix_pwr");
-
-		if (rc) {
-			dev_err(&gf_dev->spi->dev, "Failed to request PWR GPIO. rc = %d\n", rc);
-			mutex_unlock(&device_list_lock);
-			err = -EPERM;
-			goto open_error1;
-		}
-#endif
 
 		rc = gpio_request(gf_dev->reset_gpio, "gpio-reset");
 
@@ -683,9 +673,6 @@ static int gf_release(struct inode *inode, struct file *filp)
 		gpio_free(gf_dev->irq_gpio);
 		gpio_free(gf_dev->reset_gpio);
 		gf_power_off_ta(gf_dev);
-#ifdef GF_PW_CTL
-		gpio_free(gf_dev->pwr_gpio);
-#endif
 	}
 
 	mutex_unlock(&device_list_lock);
