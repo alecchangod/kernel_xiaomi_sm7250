@@ -13,6 +13,7 @@
 #include <linux/of_device.h>
 #include <linux/regmap.h>
 #include <linux/workqueue.h>
+extern int fpsensor;
 
 /* Vibrator-LDO register definitions */
 #define QPNP_VIB_LDO_REG_STATUS1	0x08
@@ -58,6 +59,11 @@ struct vib_ldo_chip {
 
 static inline int qpnp_vib_ldo_poll_status(struct vib_ldo_chip *chip)
 {
+	if(fpsensor != 2){
+		pr_err("Controlling the vibrator motor through the LED subsystem only supported on picasso, device ID: %d(2=picasso)\n", fpsensor);
+		return -1;
+	}
+
 	unsigned int val;
 	int ret;
 
@@ -79,6 +85,11 @@ static inline int qpnp_vib_ldo_poll_status(struct vib_ldo_chip *chip)
 
 static int qpnp_vib_ldo_set_voltage(struct vib_ldo_chip *chip, int new_uV)
 {
+	if(fpsensor != 2){
+		pr_err("Controlling the vibrator motor through the LED subsystem only supported on picasso, device ID: %d(2=picasso)\n", fpsensor);
+		return -1;
+	}
+
 	u32 vlevel;
 	u8 reg[2];
 	int ret;
@@ -110,6 +121,11 @@ static int qpnp_vib_ldo_set_voltage(struct vib_ldo_chip *chip, int new_uV)
 
 static inline int qpnp_vib_ldo_enable(struct vib_ldo_chip *chip, bool enable)
 {
+	if(fpsensor != 2){
+		pr_err("Controlling the vibrator motor through the LED subsystem only supported on picasso, device ID: %d(2=picasso)\n", fpsensor);
+		return -1;
+	}
+
 	int ret;
 
 	if (chip->vib_enabled == enable)
@@ -140,6 +156,11 @@ static inline int qpnp_vib_ldo_enable(struct vib_ldo_chip *chip, bool enable)
 
 static int qpnp_vibrator_play_on(struct vib_ldo_chip *chip)
 {
+	if(fpsensor != 2){
+		pr_err("Controlling the vibrator motor through the LED subsystem only supported on picasso, device ID: %d(2=picasso)\n", fpsensor);
+		return -1;
+	}
+
 	int volt_uV;
 	int ret;
 
@@ -175,27 +196,34 @@ static void qpnp_vib_work(struct work_struct *work)
 						vib_work);
 	int ret = 0;
 
-	if (chip->state) {
-		if (!chip->vib_enabled)
-			ret = qpnp_vibrator_play_on(chip);
+	if (fpsensor == 2) {
+		if (chip->state) {
+			if (!chip->vib_enabled)
+				ret = qpnp_vibrator_play_on(chip);
 
-		if (ret == 0)
-			hrtimer_start(&chip->stop_timer,
-				      ms_to_ktime(chip->vib_play_ms),
-				      HRTIMER_MODE_REL);
-	} else {
-		if (!chip->disable_overdrive) {
-			hrtimer_cancel(&chip->overdrive_timer);
-			cancel_work_sync(&chip->overdrive_work);
+			if (ret == 0)
+				hrtimer_start(&chip->stop_timer,
+						ms_to_ktime(chip->vib_play_ms),
+						HRTIMER_MODE_REL);
+		} else {
+			if (!chip->disable_overdrive) {
+				hrtimer_cancel(&chip->overdrive_timer);
+				cancel_work_sync(&chip->overdrive_work);
+			}
+			qpnp_vib_ldo_enable(chip, false);
 		}
-		qpnp_vib_ldo_enable(chip, false);
 	}
 }
 
 static enum hrtimer_restart vib_stop_timer(struct hrtimer *timer)
 {
+	if(fpsensor != 2){
+		pr_err("Controlling the vibrator motor through the LED subsystem only supported on picasso, device ID: %d(2=picasso)\n", fpsensor);
+		return -1;
+	}
+
 	struct vib_ldo_chip *chip = container_of(timer, struct vib_ldo_chip,
-					     stop_timer);
+						 stop_timer);
 
 	chip->state = 0;
 	schedule_work(&chip->vib_work);
@@ -205,9 +233,9 @@ static enum hrtimer_restart vib_stop_timer(struct hrtimer *timer)
 static void qpnp_vib_overdrive_work(struct work_struct *work)
 {
 	struct vib_ldo_chip *chip = container_of(work, struct vib_ldo_chip,
-					     overdrive_work);
+						 overdrive_work);
 	int ret;
-
+	if(fpsensor == 2){
 	mutex_lock(&chip->lock);
 
 	/* LDO voltage update not required if Vibration disabled */
@@ -222,15 +250,21 @@ static void qpnp_vib_overdrive_work(struct work_struct *work)
 		goto unlock;
 	}
 	pr_debug("voltage set to %d\n", chip->vmax_uV);
-
+	}
 unlock:
-	mutex_unlock(&chip->lock);
+	if(fpsensor == 2)
+		mutex_unlock(&chip->lock);
 }
 
 static enum hrtimer_restart vib_overdrive_timer(struct hrtimer *timer)
 {
+	if(fpsensor != 2){
+		pr_err("Controlling the vibrator motor through the LED subsystem only supported on picasso, device ID: %d(2=picasso)\n", fpsensor);
+		return -1;
+	}
+
 	struct vib_ldo_chip *chip = container_of(timer, struct vib_ldo_chip,
-					     overdrive_timer);
+						 overdrive_timer);
 	schedule_work(&chip->overdrive_work);
 	pr_debug("overdrive timer expired\n");
 	return HRTIMER_NORESTART;
@@ -239,6 +273,11 @@ static enum hrtimer_restart vib_overdrive_timer(struct hrtimer *timer)
 static ssize_t qpnp_vib_show_state(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
+	if(fpsensor != 2){
+		pr_err("Controlling the vibrator motor through the LED subsystem only supported on picasso, device ID: %d(2=picasso)\n", fpsensor);
+		return -1;
+	}
+
 	struct led_classdev *cdev = dev_get_drvdata(dev);
 	struct vib_ldo_chip *chip = container_of(cdev, struct vib_ldo_chip,
 						cdev);
@@ -249,6 +288,11 @@ static ssize_t qpnp_vib_show_state(struct device *dev,
 static ssize_t qpnp_vib_store_state(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
+	if(fpsensor != 2){
+		pr_err("Controlling the vibrator motor through the LED subsystem only supported on picasso, device ID: %d(2=picasso)\n", fpsensor);
+		return -1;
+	}
+
 	/* At present, nothing to do with setting state */
 	return count;
 }
@@ -256,6 +300,11 @@ static ssize_t qpnp_vib_store_state(struct device *dev,
 static ssize_t qpnp_vib_show_duration(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
+	if(fpsensor != 2){
+		pr_err("Controlling the vibrator motor through the LED subsystem only supported on picasso, device ID: %d(2=picasso)\n", fpsensor);
+		return -1;
+	}
+
 	struct led_classdev *cdev = dev_get_drvdata(dev);
 	struct vib_ldo_chip *chip = container_of(cdev, struct vib_ldo_chip,
 						cdev);
@@ -273,6 +322,11 @@ static ssize_t qpnp_vib_show_duration(struct device *dev,
 static ssize_t qpnp_vib_store_duration(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
+	if(fpsensor != 2){
+		pr_err("Controlling the vibrator motor through the LED subsystem only supported on picasso, device ID: %d(2=picasso)\n", fpsensor);
+		return -1;
+	}
+
 	struct led_classdev *cdev = dev_get_drvdata(dev);
 	struct vib_ldo_chip *chip = container_of(cdev, struct vib_ldo_chip,
 						cdev);
@@ -303,6 +357,10 @@ static ssize_t qpnp_vib_store_duration(struct device *dev,
 static ssize_t qpnp_vib_show_activate(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
+	if(fpsensor != 2){
+		pr_err("Controlling the vibrator motor through the LED subsystem only supported on picasso, device ID: %d(2=picasso)\n", fpsensor);
+		return -1;
+	}
 	/* For now nothing to show */
 	return snprintf(buf, PAGE_SIZE, "%d\n", 0);
 }
@@ -310,6 +368,10 @@ static ssize_t qpnp_vib_show_activate(struct device *dev,
 static ssize_t qpnp_vib_store_activate(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
+	if(fpsensor != 2){
+		pr_err("Controlling the vibrator motor through the LED subsystem only supported on picasso, device ID: %d(2=picasso)\n", fpsensor);
+		return -1;
+	}
 	struct led_classdev *cdev = dev_get_drvdata(dev);
 	struct vib_ldo_chip *chip = container_of(cdev, struct vib_ldo_chip,
 						cdev);
@@ -336,6 +398,10 @@ static ssize_t qpnp_vib_store_activate(struct device *dev,
 static ssize_t qpnp_vib_show_vmax(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
+	if(fpsensor != 2){
+		pr_err("Controlling the vibrator motor through the LED subsystem only supported on picasso, device ID: %d(2=picasso)\n", fpsensor);
+		return -1;
+	}
 	struct led_classdev *cdev = dev_get_drvdata(dev);
 	struct vib_ldo_chip *chip = container_of(cdev, struct vib_ldo_chip,
 						cdev);
@@ -346,6 +412,10 @@ static ssize_t qpnp_vib_show_vmax(struct device *dev,
 static ssize_t qpnp_vib_store_vmax(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
+	if(fpsensor != 2){
+		pr_err("Controlling the vibrator motor through the LED subsystem only supported on picasso, device ID: %d(2=picasso)\n", fpsensor);
+		return -1;
+	}
 	struct led_classdev *cdev = dev_get_drvdata(dev);
 	struct vib_ldo_chip *chip = container_of(cdev, struct vib_ldo_chip,
 						cdev);
@@ -376,6 +446,10 @@ static struct device_attribute qpnp_vib_attrs[] = {
 
 static int qpnp_vib_parse_dt(struct device *dev, struct vib_ldo_chip *chip)
 {
+	if(fpsensor != 2){
+		pr_err("Controlling the vibrator motor through the LED subsystem only supported on picasso, device ID: %d(2=picasso)\n", fpsensor);
+		return -1;
+	}
 	int ret;
 
 	ret = of_property_read_u32(dev->of_node, "qcom,vib-ldo-volt-uv",
@@ -390,7 +464,7 @@ static int qpnp_vib_parse_dt(struct device *dev, struct vib_ldo_chip *chip)
 					"qcom,disable-overdrive");
 
 	if (of_find_property(dev->of_node, "qcom,vib-overdrive-volt-uv",
-			     NULL)) {
+				 NULL)) {
 		ret = of_property_read_u32(dev->of_node,
 					   "qcom,vib-overdrive-volt-uv",
 					   &chip->overdrive_volt_uV);
@@ -423,6 +497,10 @@ static void qpnp_vib_brightness_set(struct led_classdev *cdev,
 
 static int qpnp_vibrator_ldo_suspend(struct device *dev)
 {
+	if(fpsensor != 2){
+		pr_err("Controlling the vibrator motor through the LED subsystem only supported on picasso, device ID: %d(2=picasso)\n", fpsensor);
+		return -1;
+	}
 	struct vib_ldo_chip *chip = dev_get_drvdata(dev);
 
 	mutex_lock(&chip->lock);
@@ -442,6 +520,10 @@ static SIMPLE_DEV_PM_OPS(qpnp_vibrator_ldo_pm_ops, qpnp_vibrator_ldo_suspend,
 
 static int qpnp_vibrator_ldo_probe(struct platform_device *pdev)
 {
+	if(fpsensor != 2){
+		pr_err("Controlling the vibrator motor through the LED subsystem only supported on picasso, device ID: %d(2=picasso)\n", fpsensor);
+		return -1;
+	}
 	struct device_node *of_node = pdev->dev.of_node;
 	struct vib_ldo_chip *chip;
 	int i, ret;
@@ -518,6 +600,10 @@ fail:
 
 static int qpnp_vibrator_ldo_remove(struct platform_device *pdev)
 {
+	if(fpsensor != 2){
+		pr_err("Controlling the vibrator motor through the LED subsystem only supported on picasso, device ID: %d(2=picasso)\n", fpsensor);
+		return -1;
+	}
 	struct vib_ldo_chip *chip = dev_get_drvdata(&pdev->dev);
 
 	if (!chip->disable_overdrive) {
