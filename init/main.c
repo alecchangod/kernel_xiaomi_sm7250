@@ -550,6 +550,7 @@ static void __init mm_init(void)
 	pti_init();
 }
 
+int fpsensor=1;
 void __init init_sync_kmem_pool(void);
 void __init init_dma_buf_kmem_pool(void);
 asmlinkage __visible void __init start_kernel(void)
@@ -585,6 +586,15 @@ asmlinkage __visible void __init start_kernel(void)
 	page_alloc_init();
 
 	pr_notice("Kernel command line: %s\n", boot_command_line);
+
+	const char *displayParam = "msm_drm.dsi_display0=";
+	char *ptr = strstr(boot_command_line, displayParam);
+	ptr += strlen(displayParam);
+	if (strncmp(ptr, "qcom,mdss_dsi_j9_38_0a_0a_fhd_video", strlen("qcom,mdss_dsi_j9_38_0a_0a_fhd_video")) == 0) {
+		fpsensor = 1;  // goodix_fod
+	}
+	else
+		fpsensor = 2;  // goodix_ta
 	/* parameters may set static keys */
 	jump_label_init();
 	parse_early_param();

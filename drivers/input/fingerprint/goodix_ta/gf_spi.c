@@ -84,6 +84,7 @@ static LIST_HEAD(device_list);
 static DEFINE_MUTEX(device_list_lock);
 static struct wakeup_source *fp_wakelock = NULL;
 static struct gf_dev gf;
+extern int fpsensor;
 
 struct gf_key_map maps_ta[] = {
 	{ EV_KEY, GF_KEY_INPUT_HOME },
@@ -981,6 +982,11 @@ static int __init gf_init(void)
 	 * that will key udev/mdev to add/remove /dev nodes.  Last, register
 	 * the driver which manages those device numbers.
 	 */
+	if(fpsensor != 2){
+    	pr_err("Macle goodix_ta failed as fpsensor=%d(2=goodix_ta)\n", fpsensor);
+        return -1;
+	}
+
 	BUILD_BUG_ON(N_SPI_MINORS > 256);
 	status = register_chrdev(SPIDEV_MAJOR, CHRD_DRIVER_NAME, &gf_fops);
 
