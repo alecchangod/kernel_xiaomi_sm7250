@@ -17,9 +17,7 @@
 #include <linux/extcon-provider.h>
 #include <linux/usb/typec.h>
 #include "storm-watch.h"
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
 #include <linux/usb/usbpd.h>
-#endif
 #include <linux/gpio.h>
 #include <linux/gpio/consumer.h>
 #include <linux/of_gpio.h>
@@ -93,11 +91,9 @@ enum print_reason {
 #define JEITA_VOTER             	"JEITA_VOTER"
 #define WLS_PL_CHARGING_VOTER		"WLS_PL_CHARGING_VOTER"
 #define ICL_CHANGE_VOTER		"ICL_CHANGE_VOTER"
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
 /* used for bq charge pump solution */
 #define MAIN_CHG_VOTER			"MAIN_CHG_VOTER"
 #define MAIN_FCC_VOTER			"MAIN_FCC_VOTER"
-#endif
 #define PD_VERIFED_VOTER		"PD_VERIFED_VOTER"
 #define CLASSA_QC_FCC_VOTER		"CLASSA_QC_FCC_VOTER"
 #define QC_A_CP_ICL_MAX_VOTER		"QC_A_CP_ICL_MAX_VOTER"
@@ -150,11 +146,9 @@ enum print_reason {
 #define ESR_WORK_TIME_2S		2000
 #define ESR_WORK_TIME_180S		180000
 
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
 /* defined for charger soc decimal */
 #define MAIN_CHARGER_ICL		2000000
 #define CHARGER_SOC_DECIMAL_MS		200
-#endif
 
 #define PD_UNVERIFED_CURRENT		3000000
 
@@ -166,17 +160,6 @@ enum esr_work_status {
 #define ADC_CHG_TERM_MASK		32767
 
 
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
-#define VOL_THR_FOR_QC_CLASS_AB			12300000
-#define MAX_PULSE			38
-#define MAX_PLUSE_COUNT_ALLOWED			30
-#define HIGH_NUM_PULSE_THR			12
-#define HVDCP_START_CURRENT_UA			500000
-/* defined for distinguish qc class_a and class_b */
-#define QC_CLASS_A_CURRENT_UA           3600000
-#define HVDCP_CLASS_A_MAX_UA            2500000
-#define HVDCP_CLASS_A_FOR_CP_UA         2200000
-#else
 #define VOL_THR_FOR_QC_CLASS_AB			12500000
 #define MAX_PULSE			30
 #define MAX_PLUSE_COUNT_ALLOWED			23
@@ -192,16 +175,10 @@ enum esr_work_status {
 #define HVDCP3p5_NORMAL_CURRENT_UA	3600000
 #define PD2_FCC_UA			3550000
 #define PD3_FCC_UA			3600000
-#endif
 
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
 /* ffc related */
 #define NON_FFC_VFLOAT_VOTER			"NON_FFC_VFLOAT_VOTER"
 #define NON_FFC_VFLOAT_UV			4400000
-#else
-#define NON_FFC_VFLOAT_VOTER			"NON_FFC_VFLOAT_VOTER"
-#define NON_FFC_VFLOAT_UV			4450000
-#endif
 
 /* thermal micros */
 #define MAX_TEMP_LEVEL		16
@@ -534,9 +511,7 @@ struct smb_charger {
 	struct power_supply		*usb_port_psy;
 	struct power_supply		*wls_psy;
 	struct power_supply		*cp_psy;
-#ifdef CONFIG_BATT_VERIFY_BY_DS28E16
 	struct power_supply		*batt_verify_psy;
-#endif
 	enum power_supply_type		real_charger_type;
 
 	/* notifiers */
@@ -607,21 +582,17 @@ struct smb_charger {
 	struct delayed_work	sw_cv_fcc_limit_work;
 	struct delayed_work	thermal_setting_work;
 	struct delayed_work	reduce_fcc_work;
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
 	struct delayed_work     charger_soc_decimal;
-#endif
 	struct delayed_work     status_report_work;
 	struct delayed_work	cc_un_compliant_charge_work;
 	struct delayed_work	after_ffc_chg_dis_work;
 	struct delayed_work	after_ffc_chg_en_work;
 
-#ifdef CONFIG_SMB1398_CHARGER
 	struct delayed_work	pps_monitor_work;
 	struct work_struct	super_charger_mode;
 	struct alarm		super_charger_alarm;
 	int			super_charger_check_count;
 	int			usbin_collapse_pps_active;
-#endif
 	struct alarm		lpd_recheck_timer;
 	struct alarm		moisture_protection_alarm;
 	struct alarm		chg_termination_alarm;
@@ -805,11 +776,9 @@ struct smb_charger {
 	int			recheck_charger;
 	int			precheck_charger_type;
 
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
 	/* used for bq charge pump solution */
 	struct usbpd		*pd;
 	bool			use_bq_pump;
-#endif
 
 	/* use qcom smb charger_pump */
 	bool			use_smb_pump;
@@ -1079,10 +1048,8 @@ int smblib_configure_hvdcp_apsd(struct smb_charger *chg, bool enable);
 int smblib_icl_override(struct smb_charger *chg, enum icl_override_mode mode);
 enum alarmtimer_restart smblib_lpd_recheck_timer(struct alarm *alarm,
 				ktime_t time);
-#ifdef CONFIG_SMB1398_CHARGER
 enum alarmtimer_restart smblib_super_charger_mode_timer(struct alarm *alarm,
 				ktime_t time);
-#endif
 int smblib_get_quick_charge_type(struct smb_charger *chg);
 int smblib_set_prop_type_recheck(struct smb_charger *chg,
 				 const union power_supply_propval *val);
@@ -1101,7 +1068,6 @@ int smblib_enable_moisture_detection(struct smb_charger *chg, bool enable);
 
 int smblib_set_vbus_disable(struct smb_charger *chg,
 					bool disable);
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
 int smblib_dp_dm_bq(struct smb_charger *chg, int val);
 int smblib_get_prop_battery_charging_enabled(struct smb_charger *chg,
 				union power_supply_propval *val);
@@ -1112,7 +1078,6 @@ int smblib_sw_cv_dynamic_fcc_limit(struct smb_charger *chg, int fcc_max);
 int smblib_get_prop_battery_bq_input_suspend(struct smb_charger *chg,
 					union power_supply_propval *val);
 struct usbpd *smb_get_usbpd(void);
-#endif
 int smblib_set_fastcharge_mode(struct smb_charger *chg, bool enable);
 int smblib_get_fastcharge_mode(struct smb_charger *chg);
 int smb5_config_iterm(struct smb_charger *chg, int hi_thresh, int low_thresh);

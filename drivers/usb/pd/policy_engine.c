@@ -22,6 +22,7 @@
 #include <linux/usb/typec.h>
 #include <linux/usb/usbpd.h>
 #include "usbpd.h"
+extern int fpsensor;
 
 enum usbpd_state {
 	PE_UNKNOWN,
@@ -354,10 +355,8 @@ static void *usbpd_ipc_log;
 #define MAX_FIXED_PDO_MA		2000
 #define MAX_NON_COMPLIANT_PPS_UA		2000000
 
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
 static int min_sink_current = 900;
 module_param(min_sink_current, int, 0600);
-#endif
 
 static const u32 default_src_caps[] = { 0x36019096 };	/* VSafe5V @ 1.5A */
 static const u32 default_snk_caps[] = { 0x2601912C };	/* VSafe5V @ 3A */
@@ -953,7 +952,6 @@ static int pd_select_pdo(struct usbpd *pd, int pdo_pos, int uv, int ua)
 	return 0;
 }
 
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
 static int pd_select_pdo_for_bq(struct usbpd *pd, int pdo_pos, int uv, int ua)
 {
 	int curr;
@@ -1032,7 +1030,6 @@ static int pd_select_pdo_for_bq(struct usbpd *pd, int pdo_pos, int uv, int ua)
 
 	return 0;
 }
-#endif
 
 static int pd_eval_src_caps(struct usbpd *pd)
 {
@@ -1040,9 +1037,7 @@ static int pd_eval_src_caps(struct usbpd *pd)
 	union power_supply_propval val;
 	bool pps_found = false;
 	u32 first_pdo = pd->received_pdos[0];
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
 	int max_volt, min_volt, max_curr;
-#endif
 
 	if (PD_SRC_PDO_TYPE(first_pdo) != PD_SRC_PDO_TYPE_FIXED) {
 		usbpd_err(&pd->dev, "First src_cap invalid %08x\n", first_pdo);
@@ -1069,30 +1064,30 @@ static int pd_eval_src_caps(struct usbpd *pd)
 		}
 	}
 
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
-	for (i = 0; i < ARRAY_SIZE(pd->received_pdos); i++) {
-		u32 pdo = pd->received_pdos[i];
+	if (fpsensor != 1) {
+		for (i = 0; i < ARRAY_SIZE(pd->received_pdos); i++) {
+			u32 pdo = pd->received_pdos[i];
 
-		if (pdo == 0)
-			break;
+			if (pdo == 0)
+				break;
 
-		if (PD_SRC_PDO_TYPE(pdo) == PD_SRC_PDO_TYPE_FIXED) {
-			max_volt = PD_SRC_PDO_FIXED_VOLTAGE(pdo) * 50;
-			min_volt = PD_SRC_PDO_FIXED_VOLTAGE(pdo) * 50;
-			max_curr = PD_SRC_PDO_FIXED_MAX_CURR(pdo) * 10;
-		} else if (PD_SRC_PDO_TYPE(pdo) == PD_SRC_PDO_TYPE_AUGMENTED) {
-			max_volt = PD_APDO_MAX_VOLT(pdo) * 100;
-			min_volt = PD_APDO_MIN_VOLT(pdo) * 100;
-			max_curr = PD_APDO_MAX_CURR(pdo) * 50;
+			if (PD_SRC_PDO_TYPE(pdo) == PD_SRC_PDO_TYPE_FIXED) {
+				max_volt = PD_SRC_PDO_FIXED_VOLTAGE(pdo) * 50;
+				min_volt = PD_SRC_PDO_FIXED_VOLTAGE(pdo) * 50;
+				max_curr = PD_SRC_PDO_FIXED_MAX_CURR(pdo) * 10;
+			} else if (PD_SRC_PDO_TYPE(pdo) == PD_SRC_PDO_TYPE_AUGMENTED) {
+				max_volt = PD_APDO_MAX_VOLT(pdo) * 100;
+				min_volt = PD_APDO_MIN_VOLT(pdo) * 100;
+				max_curr = PD_APDO_MAX_CURR(pdo) * 50;
+			}
+
+			usbpd_info(&pd->dev, "%s max_volt:%d,min_volt:%d,max_curr:%d\n",
+					(PD_SRC_PDO_TYPE(pdo) == PD_SRC_PDO_TYPE_AUGMENTED) ? "PPS" : "PD2.0",
+					max_volt, min_volt, max_curr);
+			if (pps_found)
+				schedule_delayed_work(&pd->src_check_work, 5 * HZ);
 		}
-
-		usbpd_info(&pd->dev, "%s max_volt:%d,min_volt:%d,max_curr:%d\n",
-				(PD_SRC_PDO_TYPE(pdo) == PD_SRC_PDO_TYPE_AUGMENTED) ? "PPS" : "PD2.0",
-				max_volt, min_volt, max_curr);
-		if (pps_found)
-			schedule_delayed_work(&pd->src_check_work, 5 * HZ);
 	}
-#endif
 
 	val.intval = pps_found ?
 			POWER_SUPPLY_PD_PPS_ACTIVE :
@@ -5347,11 +5342,11 @@ int usbpd_select_pdo(struct usbpd *pd, int pdo, int uv, int ua)
 		schedule_delayed_work(&pd->src_check_work, 5 * HZ);
 	}
 
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
-	ret = pd_select_pdo_for_bq(pd, pdo, uv, ua);
-	if (ret)
-		goto out;
-#endif
+	if (fpsensor != 1){
+		ret = pd_select_pdo_for_bq(pd, pdo, uv, ua);
+		if (ret)
+			goto out;
+	}
 
 	reinit_completion(&pd->is_ready);
 	pd->send_request = true;

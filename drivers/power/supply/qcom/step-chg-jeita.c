@@ -15,6 +15,7 @@
 #include <linux/pmic-voter.h>
 #include "step-chg-jeita.h"
 #include "smb5-lib.h"
+extern int fpsensor;
 
 #define STEP_CHG_VOTER		"STEP_CHG_VOTER"
 #define JEITA_VOTER		"JEITA_VOTER"
@@ -87,9 +88,7 @@ struct step_chg_info {
 	struct power_supply	*bms_psy;
 	struct power_supply	*usb_psy;
 	struct power_supply	*dc_psy;
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
 	struct power_supply	*bq_psy;
-#endif
 	struct delayed_work	status_change_work;
 	struct delayed_work	get_config_work;
 	struct notifier_block	nb;
@@ -104,7 +103,6 @@ static struct step_chg_info *the_chip;
 #define GET_CONFIG_RETRY_COUNT		50
 #define WAIT_BATT_ID_READY_MS		200
 
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
 static bool is_bq25970_available(struct step_chg_info *chip)
 {
 	if (!chip->bq_psy)
@@ -115,7 +113,6 @@ static bool is_bq25970_available(struct step_chg_info *chip)
 
 	return true;
 }
-#endif
 
 static bool is_batt_available(struct step_chg_info *chip)
 {
@@ -542,11 +539,8 @@ static int get_val(struct range_data *range, int hysteresis, int current_index,
 	 * of our current index.
 	 */
 	if (*new_index == current_index + 1) {
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
-		if (threshold < range[*new_index].low_threshold) {
-#else
-		if (threshold < range[*new_index].low_threshold + hysteresis) {
-#endif
+		if (((fpsensor != 1) && (threshold < range[*new_index].low_threshold)) ||
+			((fpsensor == 1) && (threshold < range[*new_index].low_threshold + hysteresis))) {
 			/*
 			 * Stay in the current index, threshold is not higher
 			 * by hysteresis amount
@@ -646,18 +640,19 @@ static int handle_step_chg_config(struct step_chg_info *chip)
 		goto update_time;
 	}
 
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
-	rc = power_supply_get_property(chip->bq_psy,
-			POWER_SUPPLY_PROP_TI_BATTERY_VOLTAGE, &pval);
-	pval.intval = pval.intval * 1000;
-#else
-	if (chip->step_chg_config->param.use_bms)
-		rc = power_supply_get_property(chip->bms_psy,
-				chip->step_chg_config->param.psy_prop, &pval);
-	else
-		rc = power_supply_get_property(chip->batt_psy,
-				chip->step_chg_config->param.psy_prop, &pval);
-#endif
+	if (fpsensor != 1) {
+		rc = power_supply_get_property(chip->bq_psy,
+				POWER_SUPPLY_PROP_TI_BATTERY_VOLTAGE, &pval);
+		pval.intval = pval.intval * 1000;
+	}
+	else {
+		if (chip->step_chg_config->param.use_bms)
+			rc = power_supply_get_property(chip->bms_psy,
+					chip->step_chg_config->param.psy_prop, &pval);
+		else
+			rc = power_supply_get_property(chip->batt_psy,
+					chip->step_chg_config->param.psy_prop, &pval);
+	}
 
 	if (rc < 0) {
 		pr_err("Couldn't read %s property rc=%d\n",
@@ -792,15 +787,9 @@ update_time:
 #define JEITA_SUSPEND_HYST_UV		50000
 #define BATT_COOL_THRESHOLD		150
 #define BATT_WARM_THRESHOLD		430
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
 #define FFC_FLOAT_VOLTAGE_FOR_PM7150_CHG	4450000
 #define FFC_FLOAT_VOLTAGE_FOR_BMS		4470000
 #define FLOAT_VOLTAGE_NORMAL			4400000
-#else
-#define FFC_FLOAT_VOLTAGE_FOR_PM7150_CHG	4480000
-#define FFC_FLOAT_VOLTAGE_FOR_BMS		4480000
-#define FLOAT_VOLTAGE_NORMAL			4450000
-#endif
 #define WARM_FLOAT_VOLTAGE			4100000
 static int handle_jeita(struct step_chg_info *chip)
 {
@@ -950,11 +939,7 @@ static int handle_jeita(struct step_chg_info *chip)
 	pr_err("pd_authentication = %d, charger_type = %d, batt_soc = %d, fascharge_mode = %d hvdcp3_type = %d\n",
 			pd_authentication, charger_type, batt_soc, fastcharge_mode, hvdcp3_type);
 
-#ifdef CONFIG_SMB1398_CHARGER
-	if (pd_authentication || charger_type == POWER_SUPPLY_TYPE_USB_HVDCP_3 || charger_type == POWER_SUPPLY_TYPE_USB_HVDCP_3P5) {
-#else
-	if (pd_authentication || hvdcp3_type == HVDCP3_CLASSB_27W) {
-#endif
+	if (pd_authentication || charger_type == POWER_SUPPLY_TYPE_USB_HVDCP_3 || charger_type == POWER_SUPPLY_TYPE_USB_HVDCP_3P5 || hvdcp3_type == HVDCP3_CLASSB_27W) {
 		if ((batt_temp >= BATT_WARM_THRESHOLD || batt_temp <= BATT_COOL_THRESHOLD) && fastcharge_mode) {
 			pr_err("temp:%d disable fastcharge mode\n", batt_temp);
 			pval.intval = false;
@@ -1061,11 +1046,8 @@ static void status_change_work(struct work_struct *work)
 	int rc = 0;
 	union power_supply_propval prop = {0, };
 
-#ifdef CONFIG_BQ2597X_CHARGE_PUMP
-	if (!is_batt_available(chip) || !is_bms_available(chip) || !is_bq25970_available(chip))
-#else
-	if (!is_batt_available(chip) || !is_bms_available(chip))
-#endif
+	if (((fpsensor != 1) && (!is_batt_available(chip) || !is_bms_available(chip) || !is_bq25970_available(chip))) ||
+		((fpsensor == 1) && (!is_batt_available(chip) || !is_bms_available(chip))))
 		goto exit_work;
 
 	handle_battery_insertion(chip);
