@@ -848,9 +848,6 @@ EXPORT_SYMBOL(inet_getname);
 int inet_sendmsg(struct socket *sock, struct msghdr *msg, size_t size)
 {
 	struct sock *sk = sock->sk;
-#ifdef CONFIG_NET_ANALYTICS
-	int err;
-#endif
 	const struct proto *prot;
 
 	sock_rps_record_flow(sk);
@@ -863,14 +860,7 @@ int inet_sendmsg(struct socket *sock, struct msghdr *msg, size_t size)
 	    inet_autobind(sk))
 		return -EAGAIN;
 
-#ifdef CONFIG_NET_ANALYTICS
-	err = sk->sk_prot->sendmsg(sk, msg, size);
-	net_usr_tx(sk, err);
-
-	return err;
-#else
-	return sk->sk_prot->sendmsg(sk, msg, size);
-#endif
+	return prot->sendmsg(sk, msg, size);
 }
 EXPORT_SYMBOL(inet_sendmsg);
 
