@@ -875,7 +875,6 @@ CONFIG_DEBUG_LIST=y
 
 # KernelSU
 CONFIG_KSU=y
-CONFIG_KSU_SUSFS=y
 
 # Kernel Memory State Tracking
 CONFIG_MEMORY_STATE_TIME=y
