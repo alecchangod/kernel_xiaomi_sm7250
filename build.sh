@@ -38,7 +38,6 @@ DEFCONFIG=monet_defconfig
 else if [ "${DEVICE}" = "vangogh" ]; then
 DEFCONFIG=vangogh_defconfig
 fi
-fi
 
 #
 # Enviromental Variables
@@ -49,7 +48,7 @@ DATE=$(date '+%Y%m%d-%H%M')
 # Set our directory
 OUT_DIR=out/
 
-VERSION="Skizo-ksu-${DEVICE}-${DATE}"
+VERSION="Yuragi-${DEVICE}-${DATE}"
 
 # Export Zip name
 export ZIPNAME="${VERSION}.zip"
